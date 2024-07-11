@@ -1,6 +1,6 @@
 import Navbar from "~/components/Navbar/Navbar";
 import type {Viewport} from 'next';
-import Image from "next/image";
+import Footer from "~/components/Footer";
 
 export const viewport: Viewport = {
     initialScale: 1,
@@ -38,11 +38,20 @@ export default function HomePage() {
                         personalised
                         plan to help you achieve your desired outcomes.
                     </p>
+                    <h2 className='text-xl md:text-2xl'>Coaching vs Mentoring</h2>
+                    <p className='text-sm md:text-lg my-3'>
+                        While career coaching and mentoring share some similarities, they are distinct approaches to
+                        professional development. Mentoring is more focused on teaching, directing, and sharing
+                        experiences, while coaching involves exploring possibilities and helping individuals develop
+                        skills to enhance their performance. At Almeida, we practice both career coaching and mentoring
+                        to cater to help everyone grow and achieve their goals.
+                    </p>
                 </div>
-                <div className='xl:w-2/3'>
-                    <Image src='/images/hero.jpg' alt='Career Coaching' width='0' height='0' sizes='100vw' className='w-full h-fit object-cover' />
+                <div className='flex xl:w-2/3 justify-center items-center'>
+                    <img src='/images/hero.jpg' alt='Career Coaching' className='w-full h-1/2 md:mt-6 md:rounded xl:m-0 xl:w-auto md:max-w-1/2 md:w-1/2' />
                 </div>
             </div>
+            <Footer />
         </>
     );
 }

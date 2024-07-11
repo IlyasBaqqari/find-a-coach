@@ -3,7 +3,7 @@ import "~/styles/globals.css";
 import { GeistSans } from "geist/font/sans";
 
 export const metadata = {
-  title: "Home - Find a Coach",
+  title: "Find Coaches - Find a Coach",
   description: "AND Alemdia Find a Coach POC",
   icons: [{ rel: "icon", url: "/favicon.ico" }],
 };
