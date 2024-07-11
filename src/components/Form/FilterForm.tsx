@@ -1,6 +1,7 @@
 'use client'
 
-import type {ChangeEvent, FormEvent, useState} from "react";
+import type {ChangeEvent, FormEvent} from "react";
+import {useState} from "react";
 
 interface FormData {
     filter: boolean;
