@@ -11,17 +11,17 @@ datasource db {
   directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
 }
 
-model Post {
-  id        Int      @id @default(autoincrement())
-  name      String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  createdBy   User   @relation(fields: [createdById], references: [id])
-  createdById String
-
-  @@index([name])
-}
+// model Post {
+//   id        Int      @id @default(autoincrement())
+//   name      String
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+//
+//   createdBy   User   @relation(fields: [createdById], references: [id])
+//   createdById String
+//
+//   @@index([name])
+// }
 
 // Necessary for Next auth
 model Account {
@@ -59,7 +59,30 @@ model User {
   image         String?
   accounts      Account[]
   sessions      Session[]
-  posts         Post[]
+  profile       Profile?  @relation
+  // posts         Post[]
+}
+
+model Profile {
+  id          String         @id @default(cuid())
+  userId      String         @unique
+  user        User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  initialised Boolean
+  isCoach     Boolean
+  role        String
+  level       String
+  coaches     Relationship[] @relation("coaching")
+  coachee     Relationship[] @relation("coachee")
+}
+
+model Relationship {
+  id        String  @id @default(cuid())
+  coachId   String
+  coacheeId String
+  coach     Profile @relation("coaching", fields: [coachId], references: [id])
+  coachee   Profile @relation("coachee", fields: [coacheeId], references: [id])
+
+  @@unique([coachId, coacheeId])
 }
 
 model VerificationToken {

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import Login from "~/components/Navbar/Login";
-import Logout from "~/components/Navbar/Logout";
+import ProfilePicture from "~/components/Navbar/ProfilePicture";
 import {getServerAuthSession} from "~/server/auth";
 import { FaMagnifyingGlass } from "react-icons/fa6";
 
@@ -15,7 +15,7 @@ export default async function Navbar() {
                 <h1 className="hidden md:block mx-auto text-lg md:text-2xl py-4 font-medium align-middle hover:underline">Find a Coach</h1>
                 <Image src='/images/logo.png' alt='Find a Coach' width='0' height='0' sizes='100vw' className='w-8 h-8 block md:hidden rounded hover:border-2 hover:border-blue-500' />
             </Link>
-            {(!session) ? <Login /> : <Logout session={session} />}
+            {(!session) ? <Login /> : <ProfilePicture session={session} />}
         </nav>
     );
 }
