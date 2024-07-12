@@ -64,15 +64,14 @@ model User {
 }
 
 model Profile {
-  id          String         @id @default(cuid())
-  userId      String         @unique
-  user        User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  initialised Boolean
-  isCoach     Boolean
-  role        String
-  level       String
-  coaches     Relationship[] @relation("coaching")
-  coachee     Relationship[] @relation("coachee")
+  id      String         @id @default(cuid())
+  userId  String         @unique
+  user    User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  isCoach Boolean
+  role    String
+  level   String
+  coaches Relationship[] @relation("coaching")
+  coachee Relationship[] @relation("coachee")
 }
 
 model Relationship {

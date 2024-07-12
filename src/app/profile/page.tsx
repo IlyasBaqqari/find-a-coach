@@ -4,6 +4,7 @@ import Footer from "~/components/Footer";
 import {getServerAuthSession} from "~/server/auth";
 import {db} from "~/server/db";
 import ErrorMessage from "~/components/ErrorMessage";
+import FirstTimeLoginForm from "~/components/Form/FirstTimeLoginForm";
 
 export const viewport: Viewport = {
     initialScale: 1,
@@ -16,22 +17,33 @@ export default async function HomePage() {
 
     const session = await getServerAuthSession();
 
-    return (
-        <ErrorMessage message={"An issue was encountered, please try again"} />
-    )
+    if (session) {
+        try {
+            const profile = await db.profile.findFirstOrThrow({where: {userId: session.user.id}});
+        } catch (e) {
+            return (
+                <>
+                    <Navbar/>
+                    <FirstTimeLoginForm session={session} />
+                    <Footer />
+                </>
+            )
+        }
 
-    // if (session) {
-    //     const user = await db.user.findFirst({where: {id: session.user.id}});
-    //     //const recipes = await db.recipe.findMany({'where': {'createdById': session.user.id}});
-    //
-    //     return (
-    //         <>
-    //             <Navbar/>
-    //                 <p>PROFILE</p>
-    //             <Footer />
-    //         </>
-    //     );
-    // } else {
-    //
-    // }
+        return (
+            <>
+                <Navbar/>
+                    <p>PROFILE</p>
+                <Footer />
+            </>
+        );
+    } else {
+        return (
+            <>
+                <Navbar />
+                <ErrorMessage message={'There was a problem accessing your profile. Please try again later.'}/>
+                <Footer />
+            </>
+        );
+    }
 }
