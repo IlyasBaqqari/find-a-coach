@@ -1,5 +1,5 @@
 import Navbar from "~/components/Navbar/Navbar";
-import type {Viewport} from 'next';
+import type {GetServerSidePropsContext, Viewport} from 'next';
 import Footer from "~/components/Footer";
 import {getServerAuthSession} from "~/server/auth";
 import {db} from "~/server/db";
@@ -11,7 +11,8 @@ export const viewport: Viewport = {
     width: 'device-width'
 }
 
-export default async function HomePage() {
+
+export default async function ProfilePage() {
     // Check User table if Profile exists
     // Either create or load data
 
@@ -19,7 +20,7 @@ export default async function HomePage() {
 
     if (session) {
         try {
-            const profile = await db.profile.findFirstOrThrow({where: {userId: session.user.id}});
+            const profile = await db.profile.findUniqueOrThrow({where: {userId: session.user.id}});
         } catch (e) {
             return (
                 <>

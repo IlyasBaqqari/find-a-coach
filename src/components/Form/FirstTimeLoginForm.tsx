@@ -1,9 +1,9 @@
 'use client'
 
-import type {ChangeEvent, FormEvent} from "react";
-import {useState} from "react";
-import {db} from "~/server/db";
-import type {Session} from "next-auth";
+import type { ChangeEvent, FormEvent } from "react";
+import { useState } from "react";
+import type { Session } from "next-auth";
+import axios from "axios";
 
 interface FormData {
     role: string;
@@ -27,16 +27,16 @@ export default function FirstTimeLoginForm({session}: {session: Session}) {
         if (target instanceof HTMLSelectElement)  {
             setFormData({ ...formData, [name]: value });
         }
-        else if (target instanceof HTMLInputElement && target.type === 'checkbox')  {
-            if (target.checked) {
+        else if (e.target instanceof HTMLInputElement && e.target.type === 'checkbox')  {
+            if (e.target.checked) {
                 setFormData((prevData) => ({
                     ...prevData,
-                    [value]: true
+                    [name]: true
                 }));
             } else {
                 setFormData((prevData) => ({
                     ...prevData,
-                    [value]: false
+                    [name]: false
                 }));
             }
         } else {
@@ -44,17 +44,37 @@ export default function FirstTimeLoginForm({session}: {session: Session}) {
         }
     };
 
-    const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
 
-        db.profile.create({
-            // TODO: fix the error
-            data: {
-                userId: session.user.id,
-                isCoach: formData.isCoach,
-                role: formData.role,
-                level: formData.level
+        const submissionData = {
+            userId: session.user.id,
+            isCoach: formData.isCoach,
+            role: formData.role,
+            level: formData.level,
+        }
+
+        for (const key in submissionData) {
+            if (submissionData[key] === '' || submissionData[key] === undefined || submissionData[key] === 'Select a level') {
+                alert('Please complete all fields before submitting')
+                return;
             }
-        })
+        }
+
+        const requestBody = JSON.stringify(submissionData);
+
+        try {
+            const response = await axios.post('/api/profile', requestBody);
+
+            if (response.status !== 200) {
+                alert('An error occurred in creating your profile.\n\nPlease try again later.')
+            }
+            console.log(response.data)
+            await response.data;
+        } catch (error) {
+            alert('An error occurred in creating your profile.\n\nPlease try again later.')
+        }
+
     };
 
     return (
@@ -63,7 +83,7 @@ export default function FirstTimeLoginForm({session}: {session: Session}) {
             <p>Level: {formData.level}</p>
             <p>isCoach: {`${formData.isCoach}`}</p>
 
-            <form onSubmit={handleSubmit} className="max-w-lg mx-auto p-4 bg-white">
+            <form name='firstTimeLoginForm' onSubmit={handleSubmit} className="max-w-lg mx-auto p-4 bg-white">
                 <h2 className='my-5 text-lg md:text-4xl'>Profile setup</h2>
 
                 <div className="mb-4">
@@ -77,7 +97,7 @@ export default function FirstTimeLoginForm({session}: {session: Session}) {
                             onChange={handleChange}
                             className="mr-2"
                         />
-                        <label htmlFor="option1-1" className="text-gray-700">Product Analyst</label>
+                        <label htmlFor="PA" className="text-gray-700">Product Analyst</label>
                     </div>
                     <div className="flex items-center">
                         <input
@@ -88,12 +108,12 @@ export default function FirstTimeLoginForm({session}: {session: Session}) {
                             onChange={handleChange}
                             className="mr-2"
                         />
-                        <label htmlFor="option1-2" className="text-gray-700">Product Developer</label>
+                        <label htmlFor="PD" className="text-gray-700">Product Developer</label>
                     </div>
                 </div>
 
                 <div className="mb-4">
-                    <label className="block text-gray-700 font-bold mb-2">Level</label>
+                    <label htmlFor='level' className="block text-gray-700 font-bold mb-2">Level</label>
                     <div className="inline-block relative w-64">
                         <select
                             id='level'
@@ -134,7 +154,7 @@ export default function FirstTimeLoginForm({session}: {session: Session}) {
                             type="checkbox"
                             id="isCoach"
                             name="isCoach"
-                            value="isCoach"
+                            value=""
                             onChange={handleChange}
                             className="mr-2"
                         />

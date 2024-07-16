@@ -56,6 +56,19 @@ export default function FilterForm() {
 
     return (
         <>
+
+            <div>
+                <p>Name: {formData.name}</p>
+                <p>PA: {`${formData.PA}`}</p>
+                <p>PD: {`${formData.PD}`}</p>
+                <p>L4: {`${formData.l4}`}</p>
+                <p>L5: {`${formData.l5}`}</p>
+                <p>L6: {`${formData.l6}`}</p>
+
+
+            </div>
+
+
             <form onSubmit={handleSubmit} className="max-w-lg mx-auto p-4 bg-white">
 
                 <div className="mb-4">
