@@ -6,6 +6,7 @@ import {db} from "~/server/db";
 import Image from "next/image";
 import type {Prisma} from "@prisma/client";
 import CoachResult from "~/components/CoachResult";
+import ErrorMessage from "~/components/ErrorMessage";
 
 interface FilterSearchParams {
     name: string;
@@ -72,11 +73,16 @@ export default async function FindCoaches({ searchParams }: { searchParams: Filt
             <div className='flex flex-col lg:flex-row justify-start w-full'>
                 <FilterForm appliedFilters={appliedFilters}/>
                 <div className='w-full h-screen overflow-y-scroll'>
-                    {coachProfiles.map(async (coach, index) => {
-                        return (
-                            <CoachResult coach={coach} key={index} />
-                        );
-                    })}
+                    {coachProfiles.length ? <p className='mx-5 my-3 text-lg'>Found {coachProfiles.length} coach{coachProfiles.length > 1 ? 'es' : ''}...</p> : ''}
+                    {
+                        coachProfiles.length
+                        ? coachProfiles.map(async (coach, index) => {
+                            return (
+                                <CoachResult coach={coach} key={index} />
+                            );
+                        })
+                        : <ErrorMessage title={'No coaches found'} message={'No coaches were found'} />
+                    }
                 </div>
             </div>
         </>

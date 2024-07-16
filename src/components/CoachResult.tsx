@@ -24,7 +24,7 @@ interface CoachResultProps {
 
 export default function CoachResult({ coach, key }: CoachResultProps) {
     return (
-        <div key={key} className="flex items-center mx-3 my-2 px-4 py-3 rounded-lg bg-zinc-200">
+        <div key={key} className="flex items-center mx-5 my-2 px-4 py-3 rounded-lg bg-zinc-200">
             <Image src={`${coach.user.image}`} alt={`${coach.user.name}`} width='0' height='0' sizes='100vw'
                    className='w-32 h-32 flex-shrink-0 rounded-md'/>
             <div className='mx-4 ms-5'>
