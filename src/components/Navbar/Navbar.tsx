@@ -9,7 +9,7 @@ export default async function Navbar() {
     const session = await getServerAuthSession()
 
     return (
-        <nav className="flex py-3 md:p-0 justify-between items-center bg-gray-200">
+        <nav className="flex py-3 md:p-0 justify-between items-center bg-zinc-200">
             <Link href="/find-coaches" className="w-64 px-10 text-xl flex text-black items-center hover:underline hover:text-blue-500"><FaMagnifyingGlass className='text-md' /><p className='ms-3 hidden w-0 md:block md:w-auto'>Search coaches</p></Link>
             <Link href="/" className='flex-shrink-0 md:flex-shrink'>
                 <h1 className="hidden md:block mx-auto text-lg md:text-2xl py-4 font-medium align-middle hover:underline">Find a Coach</h1>

@@ -14,6 +14,12 @@ const config = {
                 port: '',
                 pathname: '/a/**',
             },
+            {
+                protocol: 'https',
+                hostname: 'www.thispersondoesnotexist.com',
+                port: '',
+                pathname: '/',
+            },
         ],
     },
 };

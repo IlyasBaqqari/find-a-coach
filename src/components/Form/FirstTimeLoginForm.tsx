@@ -4,12 +4,20 @@ import type { ChangeEvent, FormEvent } from "react";
 import { useState } from "react";
 import type { Session } from "next-auth";
 import axios from "axios";
+import { redirect } from "next/navigation";
 
 interface FormData {
     role: string;
     level: string;
     isCoach: boolean;
 }
+
+interface SubmissionData {
+    userId: string;
+    isCoach: boolean;
+    role: string;
+    level: string;
+};
 
 const DEFAULT_FORM_DATA: FormData = {
     role: '',
@@ -47,7 +55,7 @@ export default function FirstTimeLoginForm({session}: {session: Session}) {
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        const submissionData = {
+        const submissionData: SubmissionData = {
             userId: session.user.id,
             isCoach: formData.isCoach,
             role: formData.role,
@@ -55,9 +63,12 @@ export default function FirstTimeLoginForm({session}: {session: Session}) {
         }
 
         for (const key in submissionData) {
-            if (submissionData[key] === '' || submissionData[key] === undefined || submissionData[key] === 'Select a level') {
-                alert('Please complete all fields before submitting')
-                return;
+            if (submissionData.hasOwnProperty(key)) {
+                const value = submissionData[key as keyof SubmissionData].toString().trim();
+                if (value === '' || value === undefined || value === 'Select a level') {
+                    alert('Please complete all fields before submitting');
+                    return;
+                }
             }
         }
 
@@ -65,12 +76,11 @@ export default function FirstTimeLoginForm({session}: {session: Session}) {
 
         try {
             const response = await axios.post('/api/profile', requestBody);
-
-            if (response.status !== 200) {
+            if (response.status === 200) {
+                window.location.reload();
+            } else {
                 alert('An error occurred in creating your profile.\n\nPlease try again later.')
             }
-            console.log(response.data)
-            await response.data;
         } catch (error) {
             alert('An error occurred in creating your profile.\n\nPlease try again later.')
         }
@@ -79,10 +89,6 @@ export default function FirstTimeLoginForm({session}: {session: Session}) {
 
     return (
         <>
-            <p>Role: {formData.role}</p>
-            <p>Level: {formData.level}</p>
-            <p>isCoach: {`${formData.isCoach}`}</p>
-
             <form name='firstTimeLoginForm' onSubmit={handleSubmit} className="max-w-lg mx-auto p-4 bg-white">
                 <h2 className='my-5 text-lg md:text-4xl'>Profile setup</h2>
 
@@ -164,7 +170,7 @@ export default function FirstTimeLoginForm({session}: {session: Session}) {
                 </div>
 
                 <button type="submit"
-                        className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition duration-300">
+                        className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-150">
                     Submit
                 </button>
             </form>

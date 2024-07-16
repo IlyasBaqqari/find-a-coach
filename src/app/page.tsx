@@ -1,6 +1,7 @@
 import Navbar from "~/components/Navbar/Navbar";
 import type {Viewport} from 'next';
 import Footer from "~/components/Footer";
+import {db} from "~/server/db";
 
 export const viewport: Viewport = {
     initialScale: 1,
@@ -51,7 +52,6 @@ export default function HomePage() {
                     <img src='/images/hero.jpg' alt='Career Coaching' className='w-full h-1/2 md:mt-6 md:rounded xl:m-0 xl:w-auto md:max-w-1/2 md:w-1/2' />
                 </div>
             </div>
-            <Footer />
         </>
     );
 }

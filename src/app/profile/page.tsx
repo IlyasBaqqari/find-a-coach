@@ -5,6 +5,9 @@ import {getServerAuthSession} from "~/server/auth";
 import {db} from "~/server/db";
 import ErrorMessage from "~/components/ErrorMessage";
 import FirstTimeLoginForm from "~/components/Form/FirstTimeLoginForm";
+import Image from "next/image";
+import {signOut} from "next-auth/react";
+import UserProfile from "~/components/UserProfile";
 
 export const viewport: Viewport = {
     initialScale: 1,
@@ -13,37 +16,34 @@ export const viewport: Viewport = {
 
 
 export default async function ProfilePage() {
-    // Check User table if Profile exists
-    // Either create or load data
-
     const session = await getServerAuthSession();
 
     if (session) {
         try {
-            const profile = await db.profile.findUniqueOrThrow({where: {userId: session.user.id}});
+            const profile = await db.profile.findUniqueOrThrow({where: {userId: session.user.id}, include: { user: true } });
+            return (
+                <>
+                    <Navbar/>
+                    <div className='m-2 sm:m-5 lg:m-10'>
+                        <h1 className='mt-5 text-2xl md:text-4xl'>Your Profile</h1>
+                        <UserProfile profile={profile} />
+                    </div>
+                </>
+            );
         } catch (e) {
             return (
                 <>
                     <Navbar/>
                     <FirstTimeLoginForm session={session} />
-                    <Footer />
                 </>
             )
         }
 
-        return (
-            <>
-                <Navbar/>
-                    <p>PROFILE</p>
-                <Footer />
-            </>
-        );
     } else {
         return (
             <>
                 <Navbar />
                 <ErrorMessage message={'There was a problem accessing your profile. Please try again later.'}/>
-                <Footer />
             </>
         );
     }

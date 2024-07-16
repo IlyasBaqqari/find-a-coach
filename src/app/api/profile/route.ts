@@ -1,7 +1,7 @@
 import { db } from "~/server/db";
 import type { NextRequest } from "next/server";
 
-type RequestBody = {
+interface POSTRequestBody {
     userId: string,
     isCoach: boolean,
     role: string,
@@ -9,12 +9,9 @@ type RequestBody = {
 }
 
 export async function POST(request: NextRequest) {
-    const { userId, isCoach, role, level }: RequestBody = await request.json();
+    const { userId, isCoach, role, level }= await request.json() as POSTRequestBody;
 
     try {
-        const user = await db.profile.findUnique({where: {id: userId}});
-        console.log(user)
-
         const newProfile = await db.profile.create({
             data: {
                 isCoach,

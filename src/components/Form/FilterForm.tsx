@@ -4,7 +4,6 @@ import type {ChangeEvent, FormEvent} from "react";
 import {useState} from "react";
 
 interface FormData {
-    filter: boolean;
     name: string;
     PA: boolean;
     PD: boolean;
@@ -14,7 +13,6 @@ interface FormData {
 }
 
 const DEFAULT_FORM_DATA: FormData = {
-    filter: false,
     name: '',
     PA: false,
     PD: false,
@@ -23,8 +21,12 @@ const DEFAULT_FORM_DATA: FormData = {
     l6: false,
 }
 
-export default function FilterForm() {
-    const [formData, setFormData] = useState<FormData>(DEFAULT_FORM_DATA);
+interface FilterFormProps {
+    appliedFilters: FormData;
+}
+
+export default function FilterForm({ appliedFilters } : FilterFormProps) {
+    const [formData, setFormData] = useState<FormData>(appliedFilters);
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { name, value, type, checked } = e.target;
@@ -49,30 +51,30 @@ export default function FilterForm() {
     const handleClear = () => {
         setFormData(DEFAULT_FORM_DATA);
         const checkboxes: NodeListOf<HTMLInputElement>  = document.querySelectorAll('[type="checkbox"]');
-        checkboxes.forEach((checkbox) => {checkbox.checked = false})
+        checkboxes.forEach((checkbox) => {checkbox.checked = false});
+        window.location.href = '/find-coaches'
     }
 
-    const handleSubmit = (e: FormEvent<HTMLFormElement>) => 1;
+    const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+
+        let url = '/find-coaches?';
+        if (formData.name.length) url += `name=${formData.name}&`;
+        if (formData.PA) url += 'role=PA&';
+        if (formData.PD) url += 'role=PD&';
+        if (formData.l4) url += 'level=4.1&level=4.2&level=4.3&';
+        if (formData.l5) url += 'level=5.1&level=5.2&level=5.3&';
+        if (formData.l6) url += 'level=6&';
+
+        window.location.href = url;
+    };
 
     return (
         <>
-
-            <div>
-                <p>Name: {formData.name}</p>
-                <p>PA: {`${formData.PA}`}</p>
-                <p>PD: {`${formData.PD}`}</p>
-                <p>L4: {`${formData.l4}`}</p>
-                <p>L5: {`${formData.l5}`}</p>
-                <p>L6: {`${formData.l6}`}</p>
-
-
-            </div>
-
-
-            <form onSubmit={handleSubmit} className="max-w-lg mx-auto p-4 bg-white">
-
+            <form onSubmit={handleSubmit} className="w-screen px-3 xs:px-10 sm:px-32 lg:max-w-lg lg:h-screen m-0 lg:px-10 py-5 bg-zinc-100 ">
+                <h1 className='text-3xl mb-5'>Search Coaches</h1>
                 <div className="mb-4">
-                    <label htmlFor="name" className="block text-gray-700 font-bold mb-2">ANDi Name</label>
+                    <label htmlFor="name" className="block font-bold mb-2">ANDi Name</label>
                     <input
                         type="text"
                         id="name"
@@ -81,12 +83,11 @@ export default function FilterForm() {
                         value={formData.name}
                         onChange={handleChange}
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-500"
-                        required
                     />
                 </div>
 
                 <div className="mb-4">
-                    <label className="block text-gray-700 font-bold mb-2">Role</label>
+                    <label className="block font-bold mb-2">Role</label>
                     <div className="flex items-center mb-2">
                         <input
                             type="checkbox"
@@ -95,8 +96,9 @@ export default function FilterForm() {
                             value="PA"
                             onChange={handleChange}
                             className="mr-2"
+                            checked={formData.PA}
                         />
-                        <label htmlFor="option1-1" className="text-gray-700">Product Analyst</label>
+                        <label htmlFor="option1-1">Product Analyst</label>
                     </div>
                     <div className="flex items-center">
                         <input
@@ -106,13 +108,14 @@ export default function FilterForm() {
                             value="PD"
                             onChange={handleChange}
                             className="mr-2"
+                            checked={formData.PD}
                         />
-                        <label htmlFor="option1-2" className="text-gray-700">Product Developer</label>
+                        <label htmlFor="option1-2">Product Developer</label>
                     </div>
                 </div>
 
                 <div className="mb-4">
-                    <label className="block text-gray-700 font-bold mb-2">Level</label>
+                    <label className="block  font-bold mb-2">Level</label>
                     <div className="flex items-center mb-2">
                         <input
                             type="checkbox"
@@ -121,8 +124,9 @@ export default function FilterForm() {
                             value="l4"
                             onChange={handleChange}
                             className="mr-2"
+                            checked={formData.l4}
                         />
-                        <label htmlFor="option2-1" className="text-gray-700">Level 4</label>
+                        <label htmlFor="option2-1" >Level 4</label>
                     </div>
                     <div className="flex items-center mb-2">
                         <input
@@ -132,8 +136,9 @@ export default function FilterForm() {
                             value="l5"
                             onChange={handleChange}
                             className="mr-2"
+                            checked={formData.l5}
                         />
-                        <label htmlFor="option2-2" className="text-gray-700">Level 5</label>
+                        <label htmlFor="option2-2" >Level 5</label>
                     </div>
                     <div className="flex items-center">
                         <input
@@ -143,20 +148,19 @@ export default function FilterForm() {
                             value="l6"
                             onChange={handleChange}
                             className="mr-2"
+                            checked={formData.l6}
                         />
-                        <label htmlFor="option2-3" className="text-gray-700">Level 6</label>
+                        <label htmlFor="option2-3" >Level 6</label>
                     </div>
                 </div>
 
-                <button type="submit"
-                        className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition duration-300">
+                <button type="submit" className="w-full mb-3 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-150">
                     Submit
                 </button>
+                <button type='reset' onClick={handleClear} className="w-full bg-stone-500 hover:bg-stone-700 text-white font-bold py-2 px-4 rounded transition duration-150">
+                    Clear Filters
+                </button>
             </form>
-            <button onClick={handleClear}
-                    className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition duration-300">
-                Clear Filters
-            </button>
         </>
     );
 }
